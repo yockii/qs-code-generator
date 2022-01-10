@@ -2,6 +2,7 @@ package service
 
 import (
     "errors"
+    "time"
 
     "github.com/yockii/qscore/pkg/database"
     "github.com/yockii/qscore/pkg/domain"
@@ -133,11 +134,11 @@ func (s *{{ .table.Name | untitle }}Service) PaginateBetweenTimes(condition *mod
     for tc, tr := range tcList {
         if tc != "" {
             if !tr.Start.IsZero() && !tr.End.IsZero() {
-                session.Where(tc+" between ? and ?", tr.Start, tr.End)
-            } else if tr.Start.IsZero() {
-                session.Where(tc+" <= ?", tr.End)
-            } else if tr.End.IsZero() {
-                session.Where(tc+" > ?", tr.Start)
+                session.Where(tc+" between ? and ?", time.Time(tr.Start), time.Time(tr.End))
+            } else if tr.Start.IsZero() && !tr.End.IsZero() {
+                session.Where(tc+" <= ?", time.Time(tr.End))
+            } else if !tr.Start.IsZero() && tr.End.IsZero() {
+                session.Where(tc+" > ?", time.Time(tr.Start))
             }
         }
     }

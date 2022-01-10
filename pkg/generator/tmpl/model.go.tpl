@@ -30,13 +30,13 @@ type {{ .table.Name | title }}Request struct {
     *{{ .table.Name | title }}
     {{ range .table.Columns -}}
         {{- if (eq .Type 3) -}}
-            {{ .Name | title }}Range *domain.TimeCondition `json:"{{ .Name | untitle }}Range,omitempty"`
+            {{ .Name | title }}Range *domain.TimeCondition `json:"{{ .Name | untitle }}Range,omitempty" query:"{{ .Name | untitle }}Range"`
         {{- end -}}
     {{- end }}
     {{ if .table.RecordCreateTime -}}
-    CreateTimeRange *domain.TimeCondition `json:"createTimeRange,omitempty"`
+    CreateTimeRange *domain.TimeCondition `json:"createTimeRange,omitempty" query:"createTimeRange"`
     {{- end }}
     {{ if .table.RecordUpdateTime -}}
-    UpdateTimeRange *domain.TimeCondition `json:"createTimeRange,omitempty"`
+    UpdateTimeRange *domain.TimeCondition `json:"updateTimeRange,omitempty" query:"updateTimeRange"`
     {{- end }}
 }

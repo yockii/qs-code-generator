@@ -28,7 +28,7 @@ func main() {
     {
         // 初始化缓存
         if config.GetBool("redis.enable") {
-            cache.UseRedis(
+            cache.InitRedis(
                 config.GetString("redis.prefix"),
                 config.GetString("redis.host"),
                 config.GetString("redis.password"),
@@ -37,11 +37,21 @@ func main() {
                 config.GetInt("redis.maxActive"),
             )
             defer cache.Close()
-        } else {
-            cache.UseMemory()
-            defer cache.Close()
         }
     }
+
+
+    // activeMQ
+    if err := activemq.InitWithUsernamePassword(config.GetString("activemq.address"), config.GetString("activemq.username"), config.GetString("activemq.password")); err != nil {
+        logger.Panic(err)
+    }
+    defer func() {
+        err := activemq.Close()
+        if err != nil {
+            logger.Error(err)
+        }
+    }()
+
     authorization.Init()
     // 初始化数据
     initial.InitData()
